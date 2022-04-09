@@ -13,8 +13,10 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    setLocked(window.unlockProtocol.getState());
-  }, []);
+    if (window.unlockProtocol) {
+      setLocked(window.unlockProtocol.getState());
+    }
+  }, [window.unlockProtocol]);
 
   return (
     <div>
