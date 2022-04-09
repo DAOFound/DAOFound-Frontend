@@ -2,28 +2,35 @@ import React, { useEffect, useState } from "react";
 import { InitSwAuth } from "@skill-wallet/auth";
 
 const App = () => {
-  const [locked, setLocked] = useState();
+  const [locked, setLocked] = useState("locked");
 
   const checkout = () => {
     window.unlockProtocol && window.unlockProtocol.loadCheckoutModal();
   };
 
   useEffect(() => {
+    const checkUnlock = async () => {
+      try {
+        await window.unlockProtocol;
+        if (window.unlockProtocol) {
+          setLocked(window.unlockProtocol.getState());
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
     InitSwAuth();
-  }, []);
 
-  useEffect(() => {
-    if (window.unlockProtocol) {
-      setLocked(window.unlockProtocol.getState());
-    }
-  }, [window.unlockProtocol]);
+    checkUnlock();
+  }, []);
 
   return (
     <div>
-      {/* <sw-auth
+      <sw-auth
         partner-key="9a916a3443179cf183be272e596a64392a6f55ea"
         use-dev="true"
-      ></sw-auth> */}
+        use-button-options="true"
+      ></sw-auth>
       <header>
         {locked === "locked" && (
           <div onClick={checkout} style={{ cursor: "pointer" }}>
